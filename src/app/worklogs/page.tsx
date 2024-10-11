@@ -29,18 +29,19 @@ const WorklogsPage = () => {
 
 	const handleLoggedWorkSuccess = useCallback<(data: LoggedWork) => void>(
 		(data) =>
-			setWorklogs((prev) =>
-				prev.map((w) =>
+			setWorklogs((prev) => {
+				return prev.map((w) =>
 					new Date(w.date).toDateString() === new Date(data.date).toDateString()
 						? { ...w, totalTimeSpentSeconds: w.totalTimeSpentSeconds + data.timeSpentSeconds }
 						: w
 				)
-			),
+			}),
 		[]
 	);
 
 	const handleWorklogsFetch = useCallback<(params: { data: Worklogs; isLoading: boolean }) => void>(
 		({ data, isLoading }) => {
+			console.log({ data })
 			if (isLoading) {
 				setWorklogs([]);
 			} else {
@@ -71,19 +72,19 @@ const WorklogsPage = () => {
 		{ key: 'date', label: 'DATE' },
 		{ key: 'timeSpent', label: 'TIME SPENT' },
 		{ key: 'issues', label: 'ISSUES' },
-		{ key: 'logWork', label: 'LOG WORK' }
+		// { key: 'logWork', label: 'LOG WORK' }
 	];
 
 	const getColumnWidth = useCallback<(key: string) => ColumnSize | undefined>((key) => {
 		switch (key) {
 			case 'date':
-				return '300';
+				return '100';
 			case 'timeSpent':
-				return '400';
+				return '100';
 			case 'issues':
 				return '500';
-			case 'logWork':
-				return '100';
+			// case 'logWork':
+			// 	return '100';
 			default:
 				return undefined;
 		}
@@ -111,6 +112,8 @@ const WorklogsPage = () => {
 			})),
 		[worklogs, handleLoggedWorkSuccess, disabledRows]
 	);
+
+	console.log('WorklogsPage render');
 
 	return (
 		<Table

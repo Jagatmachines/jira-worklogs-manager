@@ -1,9 +1,12 @@
-import { Button, ButtonGroup, DateRangePicker, Skeleton } from '@nextui-org/react';
-import { getWorklogs, type Worklogs } from '@/app/worklogs/_actions/getWorklogs';
+import { Button, ButtonGroup, DatePicker, Skeleton } from '@nextui-org/react';
+import { getWorklogs, Issue, type Worklogs } from '@/app/worklogs/_actions/getWorklogs';
 import { useEffect, useState } from 'react';
 import { useDateRange } from '@/app/worklogs/_hooks/useDateRange';
 import { toast } from 'react-hot-toast/headless';
 import { useMediaQuery } from 'react-responsive';
+
+import { today as todayInternationalized, getLocalTimeZone, CalendarDate } from '@internationalized/date';
+import { postSquadery } from '@/app/worklogs/_actions/syncSquadery';
 
 export const TableTopContent = ({
 	onFetch
@@ -18,7 +21,10 @@ export const TableTopContent = ({
 	const [isLoading, setIsLoading] = useState(false);
 	const [data, setData] = useState<Worklogs>([]);
 
-	const { dateRange, setDateRange, selectedDateRange } = useDateRange();
+	// const { dateRange, setDateRange, selectedDateRange } = useDateRange();
+
+	const now = todayInternationalized(getLocalTimeZone());
+	const [date, setDate] = useState(now.subtract({ days: 12 }));
 
 	useEffect(() => {
 		onFetch({ data, isLoading });
@@ -26,12 +32,28 @@ export const TableTopContent = ({
 
 	const handleWorklogsFetch = async () => {
 		setIsLoading(true);
+		// const res = await getWorklogs({
+		// 	dateStart: dateRange.start.toString(),
+		// 	dateEnd: dateRange.end.toString()
+		// });
 		const res = await getWorklogs({
-			dateStart: dateRange.start.toString(),
-			dateEnd: dateRange.end.toString()
+			dateStart: date.toString(),
+			dateEnd: date.toString()
 		});
 		if (res.status === 'success') setData(res.data);
 		if (res.status === 'error') res.errors.forEach((error) => toast.error(error));
+		setIsLoading(false);
+	};
+
+	const handleSquaderySync = async () => {
+		setIsLoading(true);
+		const res = await postSquadery({
+			data: JSON.stringify(data),
+			dateStart: date.toString()
+		});
+		if (res.status === 'success') res.data && toast.success('Synced successfully');
+		if (res.status === 'error') res.errors?.forEach((error) => toast.error(error));
+
 		setIsLoading(false);
 	};
 
@@ -41,15 +63,15 @@ export const TableTopContent = ({
 			isLoaded={mounted}
 			className="rounded-lg">
 			<div className="flex flex-wrap items-center justify-between gap-2 sm:justify-end md:justify-between">
-				<DateRangePicker
+				<DatePicker
 					aria-label="Date range"
 					className="md:max-w-xs"
 					visibleMonths={screenSmallerThanSM ? 1 : 2}
-					value={dateRange}
-					onChange={setDateRange}
+					value={date}
+					onChange={setDate}
 				/>
 
-				<ButtonGroup
+				{/* <ButtonGroup
 					className="hidden sm:block"
 					variant="flat">
 					<Button
@@ -77,13 +99,21 @@ export const TableTopContent = ({
 						onClick={() => setDateRange('last30Days')}>
 						Last 30 days
 					</Button>
-				</ButtonGroup>
+				</ButtonGroup> */}
 
 				<Button
 					className="mr-auto sm:ml-auto sm:mr-0"
 					onClick={handleWorklogsFetch}
 					color="primary">
 					Load worklogs
+				</Button>
+				<Button
+					className="mr-auto sm:ml-auto sm:mr-0"
+					onClick={handleSquaderySync}
+					disabled={!data.length}
+					color={!data.length ? 'default' : 'warning'}
+					>
+					Squadery Sync
 				</Button>
 			</div>
 		</Skeleton>
