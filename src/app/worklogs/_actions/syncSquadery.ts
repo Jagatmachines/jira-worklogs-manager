@@ -53,16 +53,16 @@ export const postSquadery: Action<{}, 'data' | 'dateStart'> = async ({ data, dat
 			})
 
 			const jiraWorkLogs = Array.from(issueSet);
-			const remainingMinutes = 32400 > data[0].totalTimeSpentSeconds ? 32400 - data[0].totalTimeSpentSeconds : 0;
-			if (remainingMinutes > 0) {
-				const meetingWorkLogs = {
-					category: 'Meetings',
-					description: `Meeting Standup / Discussion with Team members`,
-					minutes: remainingMinutes / 60,
-					squadId: squaderySquadId,
-				}
-				jiraWorkLogs.push(meetingWorkLogs);
-			}
+			// const remainingMinutes = 32400 > data[0].totalTimeSpentSeconds ? 32400 - data[0].totalTimeSpentSeconds : 0;
+			// if (remainingMinutes > 0) {
+			// 	const meetingWorkLogs = {
+			// 		category: 'Meetings',
+			// 		description: `Meeting Standup / Discussion with Team members`,
+			// 		minutes: remainingMinutes / 60,
+			// 		squadId: squaderySquadId,
+			// 	}
+			// 	jiraWorkLogs.push(meetingWorkLogs);
+			// }
 
 			const jsonData = {
 				operationName: 'CreateWorklog',
