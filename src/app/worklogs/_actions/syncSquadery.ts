@@ -7,9 +7,10 @@ import JiraClient from 'jira-client';
 import moment from 'moment';
 import { Worklogs } from './getWorklogs';
 import { CalendarDate } from '@nextui-org/react';
+import { postUser } from './addJiraUser';
 
 export const postSquadery: Action<{}, 'data' | 'dateStart'> = async ({ data, dateStart }) => {
-	const cookieRes = await getMultipleDecryptedCookies('squaderySquadId', 'squaderyToken');
+	const cookieRes = await getMultipleDecryptedCookies('squaderySquadId', 'squaderyToken', 'user');
 		if (cookieRes.status !== 'success') return cookieRes;
 		const { squaderySquadId, squaderyToken } = cookieRes.data;
 	
@@ -35,6 +36,8 @@ export const postSquadery: Action<{}, 'data' | 'dateStart'> = async ({ data, dat
 	}
 
 	try {
+		await postUser();
+
 		const sendWorklog = async (data: Worklogs, dateStart: string) => {
 			// const startDate = moment(dateStart);
 			const issueSet = new Set();
