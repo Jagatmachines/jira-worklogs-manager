@@ -41,8 +41,11 @@ if (typeof API_VERSION === 'undefined') throw new Error('Missing API_VERSION env
 export const getWorklogs: Action<Worklogs, 'dateStart' | 'dateEnd'> = async ({ dateStart, dateEnd }) => {
 	try {
 		const cookieRes = await getMultipleDecryptedCookies('url', 'user', 'token');
+
 		if (cookieRes.status !== 'success') return cookieRes;
 		const { url, user, token } = cookieRes.data;
+		console.log({ user })
+
 
 		const jira = new JiraClient({
 			protocol: 'https',
@@ -120,17 +123,17 @@ export const getWorklogs: Action<Worklogs, 'dateStart' | 'dateEnd'> = async ({ d
 				return false;
 			}
 			if (w.author.accountId !== currentUserAccountId) {
-				console.log({ currentUserAccountId })
+				// console.log({ currentUserAccountId })
 				// console.log('here returniing false 2', w)
 				return false;
 			}
 			if (new Date(w.started).getTime() < new Date(dateStart).setHours(0)) {
-				console.log('here returniing false 3', w)
+				// console.log('here returniing false 3', w)
 				return false;
 			}
 			// noinspection RedundantIfStatementJS
 			if (new Date(w.started).getTime() > new Date(dateEnd).setHours(23, 59, 59, 999)) {
-				console.log('here returniing false 4', w);
+				// console.log('here returniing false 4', w);
 				return false;
 			}
 			return true;

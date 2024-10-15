@@ -13,8 +13,8 @@ export const postSquadery: Action<{}, 'data' | 'dateStart'> = async ({ data, dat
 		if (cookieRes.status !== 'success') return cookieRes;
 		const { squaderySquadId, squaderyToken } = cookieRes.data;
 	
-	console.log('postSquadery called', JSON.parse(data));
-	console.log({ squaderyToken, squaderySquadId })
+	// console.log('postSquadery called', JSON.parse(data));
+	// console.log({ squaderyToken, squaderySquadId })
 
 //FIXME - get the bearer token from the cookies
 	const headers = {
@@ -105,10 +105,9 @@ export const postSquadery: Action<{}, 'data' | 'dateStart'> = async ({ data, dat
 				}`,
 			};
 
-			console.log({ jsonData })
+			// console.log({ jsonData })
 
 			try {
-				debugger;
 				// Make the API request (using fetch or any other method)
 				const response = await fetch('https://manage-api.squadery.com/graphql', {
 					method: 'POST',
@@ -117,7 +116,6 @@ export const postSquadery: Action<{}, 'data' | 'dateStart'> = async ({ data, dat
 				});
 
 				const responseData = await response.json();
-				debugger;
 				console.log(`Response for ${dateStart}: ${response.status}, ${JSON.stringify(responseData)}`);
 			} catch (error) {
 				console.error(`Error for ${dateStart}:`, error);

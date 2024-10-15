@@ -41,7 +41,7 @@ const WorklogsPage = () => {
 
 	const handleWorklogsFetch = useCallback<(params: { data: Worklogs; isLoading: boolean }) => void>(
 		({ data, isLoading }) => {
-			console.log({ data })
+			// console.log({ data })
 			if (isLoading) {
 				setWorklogs([]);
 			} else {
@@ -113,7 +113,7 @@ const WorklogsPage = () => {
 		[worklogs, handleLoggedWorkSuccess, disabledRows]
 	);
 
-	console.log('WorklogsPage render');
+	// console.log('WorklogsPage render');
 
 	return (
 		<>
