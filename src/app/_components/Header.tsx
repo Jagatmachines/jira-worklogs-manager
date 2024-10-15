@@ -26,6 +26,13 @@ export const Header = () => {
 						Configuration
 					</Link>
 				</NavbarItem>
+				<NavbarItem isActive={pathName === '/feedback'}>
+					<Link
+						color="foreground"
+						href="/feedback">
+						Issue / Feedback
+					</Link>
+				</NavbarItem>
 			</NavbarContent>
 		</Navbar>
 	);
