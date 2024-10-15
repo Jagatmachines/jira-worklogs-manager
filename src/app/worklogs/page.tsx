@@ -116,35 +116,37 @@ const WorklogsPage = () => {
 	console.log('WorklogsPage render');
 
 	return (
-		<Table
-			shadow="md"
-			isHeaderSticky
-			disabledKeys={disabledRows}
-			aria-label="Worklog table"
-			className="max-h-[calc(100dvh-5rem)]"
-			topContent={<TableTopContent onFetch={handleWorklogsFetch} />}>
-			<TableHeader columns={columns}>
-				{(column) => (
-					<TableColumn
-						align={column.key === 'date' ? 'start' : 'center'}
-						width={getColumnWidth(column.key)}
-						key={column.key}>
-						{column.label}
-					</TableColumn>
-				)}
-			</TableHeader>
-			<TableBody
-				items={rows}
-				isLoading={isLoading}
-				loadingContent={<Skeleton className="absolute inset-0" />}
-				emptyContent="Click 'Load worklogs'">
-				{(item) => (
-					<TableRow key={item.key}>
-						{(columnKey) => <TableCell>{getKeyValue(item, columnKey)}</TableCell>}
-					</TableRow>
-				)}
-			</TableBody>
-		</Table>
+		<>
+			<Table
+				shadow="md"
+				isHeaderSticky
+				disabledKeys={disabledRows}
+				aria-label="Worklog table"
+				className="max-h-[calc(100dvh-5rem)]"
+				topContent={<TableTopContent onFetch={handleWorklogsFetch} />}>
+				<TableHeader columns={columns}>
+					{(column) => (
+						<TableColumn
+							align={column.key === 'date' ? 'start' : 'center'}
+							width={getColumnWidth(column.key)}
+							key={column.key}>
+							{column.label}
+						</TableColumn>
+					)}
+				</TableHeader>
+				<TableBody
+					items={rows}
+					isLoading={isLoading}
+					loadingContent={<Skeleton className="absolute inset-0" />}
+					emptyContent="Click 'Load worklogs  123'">
+					{(item) => (
+						<TableRow key={item.key}>
+							{(columnKey) => <TableCell>{getKeyValue(item, columnKey)}</TableCell>}
+						</TableRow>
+					)}
+				</TableBody>
+			</Table>
+		</>
 	);
 };
 export default WorklogsPage;
