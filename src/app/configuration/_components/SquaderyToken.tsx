@@ -19,7 +19,7 @@ export const SquaderyTokenInput = () => {
 				style={{ alignItems: description ? 'center' : 'end' }}>
 				<Input
 					type={isVisible ? 'text' : 'password'}
-					label="Squadery Bearer token"
+					label="Squadery Bearer token (from the network tab in the browser console via graphql api)"
 					labelPlacement="outside"
 					value={value}
 					onChange={(e) => setValue(e.target.value)}

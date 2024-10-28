@@ -17,7 +17,7 @@ export const UserInput = () => {
 				style={{ alignItems: description ? 'center' : 'end' }}>
 				<Input
 					type="text"
-					label="Jira username"
+					label="Jira email address"
 					labelPlacement="outside"
 					value={value}
 					onChange={(e) => setValue(e.target.value)}

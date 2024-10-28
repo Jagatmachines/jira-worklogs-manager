@@ -17,7 +17,7 @@ export const SquaderySquadId = () => {
 				style={{ alignItems: description ? 'center' : 'end' }}>
 				<Input
 					type="text"
-					label="Squadery Squad ID"
+					label="Squadery Squad ID (after you press Add work in Squadery, you will see https://connect.squadery.com/#/add-worklogs/<squadery-squad-id>)"
 					labelPlacement="outside"
 					value={value}
 					onChange={(e) => setValue(e.target.value)}

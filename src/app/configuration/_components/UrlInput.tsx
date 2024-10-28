@@ -17,7 +17,7 @@ export const UrlInput = () => {
 				style={{ alignItems: description ? 'center' : 'end' }}>
 				<Input
 					type="url"
-					label="Jira instance url"
+					label="Jira instance url (eg: https://otgmanagement.atlassian.net)"
 					labelPlacement="outside"
 					value={value}
 					onChange={(e) => setValue(e.target.value)}
