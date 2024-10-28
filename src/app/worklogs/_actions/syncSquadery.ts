@@ -1,13 +1,13 @@
 'use server';
 import { getMultipleDecryptedCookies } from '@/lib/actions/getMultipleDecryptedCookies';
 import { Action, JiraData } from '@/types/types';
-import Holidays, { HolidaysTypes } from 'date-holidays';
-import { cookies } from 'next/headers';
-import JiraClient from 'jira-client';
-import moment from 'moment';
+// import Holidays, { HolidaysTypes } from 'date-holidays';
+// import { cookies } from 'next/headers';
+// import JiraClient from 'jira-client';
+// import moment from 'moment';
 import { Worklogs } from './getWorklogs';
-import { CalendarDate } from '@nextui-org/react';
-import { postUser } from './addJiraUser';
+// import { CalendarDate } from '@nextui-org/react';
+// import { postUser } from './addJiraUser';
 
 export const postSquadery: Action<{}, 'data' | 'dateStart'> = async ({ data, dateStart }) => {
 	const cookieRes = await getMultipleDecryptedCookies('squaderySquadId', 'squaderyToken', 'user');
@@ -36,7 +36,7 @@ export const postSquadery: Action<{}, 'data' | 'dateStart'> = async ({ data, dat
 	}
 
 	try {
-		await postUser();
+		// await postUser();
 
 		const sendWorklog = async (data: Worklogs, dateStart: string) => {
 			// const startDate = moment(dateStart);
