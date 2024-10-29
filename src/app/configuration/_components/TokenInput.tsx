@@ -19,7 +19,7 @@ export const TokenInput = () => {
 				style={{ alignItems: description ? 'center' : 'end' }}>
 				<Input
 					type={isVisible ? 'text' : 'password'}
-					label="Jira personal token"
+					label="Jira personal token (generated from https://id.atlassian.com/manage-profile/security/api-tokens)"
 					labelPlacement="outside"
 					value={value}
 					onChange={(e) => setValue(e.target.value)}
