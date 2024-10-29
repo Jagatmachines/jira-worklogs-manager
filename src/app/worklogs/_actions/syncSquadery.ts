@@ -9,7 +9,7 @@ import { Worklogs } from './getWorklogs';
 // import { CalendarDate } from '@nextui-org/react';
 // import { postUser } from './addJiraUser';
 
-export const postSquadery: Action<{}, 'data' | 'dateStart'> = async ({ data, dateStart }) => {
+export const postSquadery: Action<{}, 'data' | 'dateStart' | 'worklogSelection'> = async ({ data, dateStart, worklogSelection }) => {
 	const cookieRes = await getMultipleDecryptedCookies('squaderySquadId', 'squaderyToken', 'user');
 		if (cookieRes.status !== 'success') return cookieRes;
 		const { squaderySquadId, squaderyToken } = cookieRes.data;
@@ -46,7 +46,7 @@ export const postSquadery: Action<{}, 'data' | 'dateStart'> = async ({ data, dat
 			data[0].issues.forEach((issue) => {
 				issue.workLogDetails.forEach((worklog) => {
 					issueSet.add({
-						category: 'Algorithm Development',
+						category: worklogSelection,
 						description: `${issue.key} - ${worklog.comment}`,
 						minutes: worklog.timeSpentSeconds / 60,
 						squadId: squaderySquadId,
@@ -56,16 +56,16 @@ export const postSquadery: Action<{}, 'data' | 'dateStart'> = async ({ data, dat
 			})
 
 			const jiraWorkLogs = Array.from(issueSet);
-			// const remainingMinutes = 32400 > data[0].totalTimeSpentSeconds ? 32400 - data[0].totalTimeSpentSeconds : 0;
-			// if (remainingMinutes > 0) {
-			// 	const meetingWorkLogs = {
-			// 		category: 'Meetings',
-			// 		description: `Meeting Standup / Discussion with Team members`,
-			// 		minutes: remainingMinutes / 60,
-			// 		squadId: squaderySquadId,
-			// 	}
-			// 	jiraWorkLogs.push(meetingWorkLogs);
-			// }
+			const remainingMinutes = 32400 > data[0].totalTimeSpentSeconds ? 32400 - data[0].totalTimeSpentSeconds : 0;
+			if (remainingMinutes > 0) {
+				const meetingWorkLogs = {
+					category: 'Meetings',
+					description: `Meeting Standup / Discussion with Team members`,
+					minutes: remainingMinutes / 60,
+					squadId: squaderySquadId,
+				}
+				jiraWorkLogs.push(meetingWorkLogs);
+			}
 
 			const jsonData = {
 				operationName: 'CreateWorklog',

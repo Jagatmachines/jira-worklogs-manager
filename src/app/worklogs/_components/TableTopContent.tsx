@@ -1,7 +1,7 @@
-import { Button, ButtonGroup, DatePicker, Skeleton } from '@nextui-org/react';
+import { Button, ButtonGroup, DatePicker, Select, SelectItem, Skeleton } from '@nextui-org/react';
 import { getWorklogs, Issue, type Worklogs } from '@/app/worklogs/_actions/getWorklogs';
 import { useEffect, useState } from 'react';
-import { useDateRange } from '@/app/worklogs/_hooks/useDateRange';
+// import { useDateRange } from '@/app/worklogs/_hooks/useDateRange';
 import { toast } from 'react-hot-toast/headless';
 import { useMediaQuery } from 'react-responsive';
 
@@ -49,12 +49,29 @@ export const TableTopContent = ({
 		setIsLoading(true);
 		const res = await postSquadery({
 			data: JSON.stringify(data),
-			dateStart: date.toString()
+			dateStart: date.toString(),
+			worklogSelection
 		});
 		if (res.status === 'success') res.data && toast.success('Synced successfully');
 		if (res.status === 'error') res.errors?.forEach((error) => toast.error(error));
 
 		setIsLoading(false);
+	};
+
+	const worklogCategorys = [
+		{key: "Algorithm Development", label: "Algorithm Development"},
+		{key: "Coding", label: "Testing"},
+		{key: "Problem Solving", label: "Problem Solving"},
+		{key: "Analysis", label: "Analysis"},
+		{key: "Devops Thing", label: "Devops Thing"},
+		{key: "Doing some cool thing 😎", label: "Doing some cool thing 😎"},
+		{key: "Other", label: "Other"},
+	  ];
+
+	const [worklogSelection, setWorklogSelection] = useState("");
+
+	const handleSelectionChange = (e: any) => {
+		setWorklogSelection(e.target.value);
 	};
 
 	// noinspection RequiredAttributes - DateRangePicker seems to have wrongly typed required attributes
@@ -70,6 +87,20 @@ export const TableTopContent = ({
 					value={date}
 					onChange={setDate}
 				/>
+
+				<Select
+					label="Select work category for all worklogs"
+					className="max-w-xs"
+					onChange={handleSelectionChange}
+					selectedKeys={[worklogSelection]}
+					defaultSelectedKeys={['Algorithm Development']}
+				>
+					{worklogCategorys.map((category) => (
+						<SelectItem key={category.key}>
+							{category.label}
+						</SelectItem>
+					))}
+				</Select>
 
 				{/* <ButtonGroup
 					className="hidden sm:block"
