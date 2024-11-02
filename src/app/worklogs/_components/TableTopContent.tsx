@@ -52,7 +52,7 @@ export const TableTopContent = ({
 			dateStart: date.toString(),
 			worklogSelection
 		});
-		if (res.status === 'success') res.data && toast.success('Synced successfully');
+		if (res.status === 'success') res.data && toast.success('Synced Done, please check Squadery to verify the success');
 		if (res.status === 'error') res.errors?.forEach((error) => toast.error(error));
 
 		setIsLoading(false);
