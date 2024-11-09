@@ -1,6 +1,6 @@
 'use server';
 import { getMultipleDecryptedCookies } from '@/lib/actions/getMultipleDecryptedCookies';
-import { Action, JiraData } from '@/types/types';
+import { Action } from '@/types/types';
 // import Holidays, { HolidaysTypes } from 'date-holidays';
 // import { cookies } from 'next/headers';
 // import JiraClient from 'jira-client';
@@ -9,7 +9,7 @@ import { Worklogs } from './getWorklogs';
 // import { CalendarDate } from '@nextui-org/react';
 // import { postUser } from './addJiraUser';
 
-export const postSquadery: Action<{}, 'data' | 'dateStart' | 'worklogSelection'> = async ({ data, dateStart, worklogSelection }) => {
+export const postSquadery: Action<{ message: string }, 'data' | 'dateStart' | 'worklogSelection'> = async ({ data, dateStart, worklogSelection }) => {
 	const cookieRes = await getMultipleDecryptedCookies('squaderySquadId', 'squaderyToken', 'user');
 		if (cookieRes.status !== 'success') return cookieRes;
 		const { squaderySquadId, squaderyToken } = cookieRes.data;
@@ -17,7 +17,7 @@ export const postSquadery: Action<{}, 'data' | 'dateStart' | 'worklogSelection'>
 	// console.log('postSquadery called', JSON.parse(data));
 	// console.log({ squaderyToken, squaderySquadId })
 
-//FIXME - get the bearer token from the cookies
+	//FIXME - get the bearer token from the cookies
 	const headers = {
 		'authority': 'manage-api.squadery.com',
 		'accept': '/',
@@ -38,105 +38,103 @@ export const postSquadery: Action<{}, 'data' | 'dateStart' | 'worklogSelection'>
 	try {
 		// await postUser();
 
-		const sendWorklog = async (data: Worklogs, dateStart: string) => {
-			// const startDate = moment(dateStart);
-			const issueSet = new Set();
+		const issueSet = new Set();
+
+		const worklogData: Worklogs = JSON.parse(data);
 
 
-			data[0].issues.forEach((issue) => {
-				issue.workLogDetails.forEach((worklog) => {
-					issueSet.add({
-						category: worklogSelection,
-						description: `${issue.key} - ${worklog.comment}`,
-						minutes: worklog.timeSpentSeconds / 60,
-						squadId: squaderySquadId,
-						// startTime: moment(worklog.started).toISOString()
-					})
+		worklogData[0].issues.forEach((issue) => {
+			issue.workLogDetails.forEach((worklog) => {
+				issueSet.add({
+					category: worklogSelection,
+					description: `${issue.key} - ${worklog.comment}`,
+					minutes: worklog.timeSpentSeconds / 60,
+					squadId: squaderySquadId,
+					// startTime: moment(worklog.started).toISOString()
 				})
 			})
+		})
 
-			const jiraWorkLogs = Array.from(issueSet);
-			// const remainingMinutes = 32400 > data[0].totalTimeSpentSeconds ? 32400 - data[0].totalTimeSpentSeconds : 0;
-			// if (remainingMinutes > 0) {
-			// 	const meetingWorkLogs = {
-			// 		category: 'Meetings',
-			// 		description: `Meeting Standup / Discussion with Team members`,
-			// 		minutes: remainingMinutes / 60,
-			// 		squadId: squaderySquadId,
-			// 	}
-			// 	jiraWorkLogs.push(meetingWorkLogs);
-			// }
+		const jiraWorkLogs = Array.from(issueSet);
+		// const remainingMinutes = 32400 > worklogData[0].totalTimeSpentSeconds ? 32400 - worklogData[0].totalTimeSpentSeconds : 0;
+		// if (remainingMinutes > 0) {
+		// 	const meetingWorkLogs = {
+		// 		category: 'Meetings',
+		// 		description: `Meeting Standup / Discussion with Team members`,
+		// 		minutes: remainingMinutes / 60,
+		// 		squadId: squaderySquadId,
+		// 	}
+		// 	jiraWorkLogs.push(meetingWorkLogs);
+		// }
 
-			const jsonData = {
-				operationName: 'CreateWorklog',
-				variables: {
-					worklogInput: {
-						endDate: new Date(dateStart).toISOString(),
-						squadId: squaderySquadId,
-						startDate: new Date(dateStart).toISOString(),
-						tasks: jiraWorkLogs
-					},
+		const jsonData = {
+			operationName: 'CreateWorklog',
+			variables: {
+				worklogInput: {
+					endDate: new Date(dateStart).toISOString(),
+					squadId: squaderySquadId,
+					startDate: new Date(dateStart).toISOString(),
+					tasks: jiraWorkLogs
 				},
-				query: `mutation CreateWorklog($worklogInput: NewWorklogDto!) {
-					createWorklog(worklogInput: $worklogInput) {
-						...WorklogResponseFields
-					}
+			},
+			query: `mutation CreateWorklog($worklogInput: NewWorklogDto!) {
+				createWorklog(worklogInput: $worklogInput) {
+					...WorklogResponseFields
 				}
-
-				fragment WorklogResponseFields on WorklogResponseDto {
-					id
-					squadId
-					status
-					startDate
-					endDate
-					reviewedBy
-					tasks {
-						...TaskResponseFields
-					}
-				}
-
-				fragment TaskResponseFields on WorklogTaskResponseDto {
-					id
-					userId
-					squadId
-					worklogId
-					category
-					minutes
-					description
-					startTime
-					endTime
-				}`,
-			};
-
-			// console.log({ jsonData })
-
-			try {
-				// Make the API request (using fetch or any other method)
-				const response = await fetch('https://manage-api.squadery.com/graphql', {
-					method: 'POST',
-					headers: headers,
-					body: JSON.stringify(jsonData),
-				});
-
-				const responseData = await response.json();
-				console.log(`Response for ${dateStart}: ${response.status}, ${JSON.stringify(responseData)}`);
-			} catch (error) {
-				console.error(`Error for ${dateStart}:`, error);
-				return {
-					status: 'error',
-					data: error
-				};
 			}
+
+			fragment WorklogResponseFields on WorklogResponseDto {
+				id
+				squadId
+				status
+				startDate
+				endDate
+				reviewedBy
+				tasks {
+					...TaskResponseFields
+				}
+			}
+
+			fragment TaskResponseFields on WorklogTaskResponseDto {
+				id
+				userId
+				squadId
+				worklogId
+				category
+				minutes
+				description
+				startTime
+				endTime
+			}`,
 		};
 
-		await sendWorklog(JSON.parse(data), dateStart)
-	
-		return {
-			status: 'success',
-			data: {}
-		};
-	} catch (e) {
-		console.error(e);
+		const response = await fetch('https://manage-api.squadery.com/graphql', {
+			method: 'POST',
+			headers: headers,
+			body: JSON.stringify(jsonData),
+		});
+
+		const responseData = await response.json();
+		console.log(`Response for ${dateStart}: ${response.status}, ${JSON.stringify(responseData)}`);
+
+		if (response.status === 200 && responseData.data.createWorklog.status === "PENDING") {
+			return {
+				status: 'success',
+				data: {
+					message: 'Synced Done, please check Squadery to verify the success'
+				}
+			};
+		} else {
+			return {
+				status: 'error',
+				errors: ['Something went wrong']
+			};
+		}
+		
+		
+
+	} catch (error) {
+		console.error(`Error for ${dateStart}:`, error);
 		return {
 			status: 'error',
 			errors: ['Something went wrong']

@@ -1,5 +1,5 @@
-import { Button, ButtonGroup, DatePicker, Select, SelectItem, Skeleton } from '@nextui-org/react';
-import { getWorklogs, Issue, type Worklogs } from '@/app/worklogs/_actions/getWorklogs';
+import { Button, DatePicker, Select, SelectItem, Skeleton } from '@nextui-org/react';
+import { getWorklogs, type Worklogs } from '@/app/worklogs/_actions/getWorklogs';
 import { useEffect, useState } from 'react';
 // import { useDateRange } from '@/app/worklogs/_hooks/useDateRange';
 import { toast } from 'react-hot-toast/headless';
@@ -52,7 +52,7 @@ export const TableTopContent = ({
 			dateStart: date.toString(),
 			worklogSelection
 		});
-		if (res.status === 'success') res.data && toast.success('Synced Done, please check Squadery to verify the success');
+		if (res.status === 'success') res.data && toast.success(`${res.data?.message} for date ${date.toString()}`);
 		if (res.status === 'error') res.errors?.forEach((error) => toast.error(error));
 
 		setIsLoading(false);
