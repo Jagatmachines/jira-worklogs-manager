@@ -68,7 +68,7 @@ export const TableTopContent = ({
 		{key: "Other", label: "Other"},
 	  ];
 
-	const [worklogSelection, setWorklogSelection] = useState("");
+	const [worklogSelection, setWorklogSelection] = useState("Problem Solving");
 
 	const handleSelectionChange = (e: any) => {
 		setWorklogSelection(e.target.value);
