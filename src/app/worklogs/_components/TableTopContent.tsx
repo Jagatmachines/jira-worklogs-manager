@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast/headless';
 import { useMediaQuery } from 'react-responsive';
 
-import { today as todayInternationalized, getLocalTimeZone, CalendarDate } from '@internationalized/date';
+import { today as todayInternationalized, getLocalTimeZone } from '@internationalized/date';
 import { postSquadery } from '@/app/worklogs/_actions/syncSquadery';
 
 export const TableTopContent = ({
@@ -52,8 +52,15 @@ export const TableTopContent = ({
 			dateStart: date.toString(),
 			worklogSelection
 		});
-		if (res.status === 'success') res.data && toast.success(`${res.data?.message} for date ${date.toString()}`);
-		if (res.status === 'error') res.errors?.forEach((error) => toast.error(error));
+		try {
+			if (res.status === 'success') {
+				res.data && toast.success(`${res.data?.message} for date ${date.toString()}`);
+			} else if (res.status === 'error'){
+				res.errors?.forEach((error) => toast.error(`Squadery ${error?.message}`));
+			}
+		} catch(e) {
+			toast.error('Something went wrong')
+		}
 
 		setIsLoading(false);
 	};

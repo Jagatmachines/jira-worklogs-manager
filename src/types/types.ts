@@ -16,7 +16,7 @@ export type JiraData<
 
 export type StandardizedResponse<T> =
 	| { data: T; status: 'success' }
-	| { errors: (string | JSX.Element)[]; status: 'error' }
+	| { errors: (any | JSX.Element)[]; status: 'error' }
 	| { status: 'idle' };
 
 export type Action<T, P extends string | number | symbol = string> = (

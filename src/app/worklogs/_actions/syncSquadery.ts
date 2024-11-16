@@ -117,7 +117,7 @@ export const postSquadery: Action<{ message: string }, 'data' | 'dateStart' | 'w
 		const responseData = await response.json();
 		console.log(`Response for ${dateStart}: ${response.status}, ${JSON.stringify(responseData)}`);
 
-		if (response.status === 200 && responseData.data.createWorklog.status === "PENDING") {
+		if (response.status === 200 && responseData.data?.createWorklog.status === "PENDING") {
 			return {
 				status: 'success',
 				data: {
@@ -127,7 +127,7 @@ export const postSquadery: Action<{ message: string }, 'data' | 'dateStart' | 'w
 		} else {
 			return {
 				status: 'error',
-				errors: ['Something went wrong']
+				errors: responseData.errors
 			};
 		}
 		
@@ -137,7 +137,7 @@ export const postSquadery: Action<{ message: string }, 'data' | 'dateStart' | 'w
 		console.error(`Error for ${dateStart}:`, error);
 		return {
 			status: 'error',
-			errors: ['Something went wrong']
+			errors: error
 		};
 	}
 };
