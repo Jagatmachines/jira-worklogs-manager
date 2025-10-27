@@ -5,6 +5,7 @@ import AppProviders from '@/app/providers';
 import { type ReactNode } from 'react';
 import { Toaster } from '@/app/_components/Toaster';
 import { Header } from '@/app/_components/Header';
+import { MaintenanceBreak } from './worklogs/_components/MaintenanceBreak';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -30,6 +31,7 @@ const AppLayout = ({
 			<body className={inter.className}>
 				<AppProviders>
 					<Header />
+					<MaintenanceBreak />
 					<main className="container mx-auto p-2">{children}</main>
 					<Toaster />
 				</AppProviders>
