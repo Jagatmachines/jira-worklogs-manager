@@ -17,6 +17,7 @@ import { formatDuration } from './utils/time';
 import { extractTextFromAtlassianDocumentFormat } from './utils/jira';
 import useTheme from './hooks/useTheme';
 import { randomUUID } from './utils/uuid';
+import useSquaderyNew from './hooks/useSquadery';
 
 // Makes sure global libraries are available for debugging if needed
 declare global {
@@ -44,8 +45,10 @@ export default function App() {
     () => settings.accounts.find((a) => a.id === settings.activeAccount),
     [settings.accounts, settings.activeAccount],
   );
+
   useTheme(settings.theme);
-  const { client, state, backendData, fetchWorklogs, updateState } = useJira(activeAccount);
+  const { client, state, backendData, fetchWorklogs, updateState, isLoading } = useJira(activeAccount);
+  const { success, failure, message, isLoading: isSquaderyLoading, postSquadery } = useSquaderyNew(activeAccount);
 
   const [selectedDate, setSelectedDate] = useState<Date>(moment().toDate());
   const [hoveredLogId, setHoveredLogId] = useState<string | null>(null);
@@ -444,7 +447,16 @@ export default function App() {
               />
             </div>
 
-            {timelineData.allLogs.length > 0 && (
+            {isLoading && (
+              <div className="flex justify-center items-center py-12">
+                <div className="relative w-12 h-12">
+                  <div className="absolute top-0 left-0 w-full h-full border-4 border-blue-200 rounded-full"></div>
+                  <div className="absolute top-0 left-0 w-full h-full border-4 border-blue-600 rounded-full animate-spin border-t-transparent"></div>
+                </div>
+                <span className="ml-3 text-gray-600 dark:text-gray-400">Loading...</span>
+              </div>
+            )}
+            {!isLoading && timelineData.allLogs.length > 0 && (
               <TimelineTable
                 logs={timelineData.allLogs}
                 hoveredLogId={hoveredLogId}
@@ -459,6 +471,12 @@ export default function App() {
                 starredTickets={state.starredTickets}
                 toggleStar={toggleStar}
               />
+            )}
+            {!isLoading && timelineData.allLogs.length === 0 && (
+              <div className="text-center py-16">
+                <p className="text-gray-500 dark:text-gray-400">No timelogs found for the selected date.</p>
+                <p className="text-sm text-gray-400 mt-2">Use the search to start tracking or add a log.</p>
+              </div>
             )}
           </div>
         </div>

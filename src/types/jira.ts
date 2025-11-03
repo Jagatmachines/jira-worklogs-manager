@@ -124,6 +124,11 @@ export interface ProcessedTimelog extends JiraTimelog {
   durationString: string;
   workDescription: string;
   isTracking?: false;
+  issue: {
+    id: string
+    key: string
+    self: string
+  }
 }
 
 export interface JiraAccount {
@@ -131,6 +136,8 @@ export interface JiraAccount {
   jiraToken: string;
   email: string;
   jiraSubdomain: string;
+  squaderySquadId?: string;
+  squaderyToken?: string;
 }
 
 export interface Settings {

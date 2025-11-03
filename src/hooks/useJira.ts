@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import moment from 'moment';
 import { JiraApiClient } from '../services/jira';
-import type { State } from '../types/jira';
+import type { JiraAccount, State } from '../types/jira';
 import { JIRA_PROPERTY_KEY, parseState, stringifyState } from '../utils/jira';
 
 type StateUpdater = (currentState: State) => State;
@@ -25,6 +25,7 @@ const useJira = (activeAccount: JiraAccount | undefined) => {
   const [client, setClient] = useState<JiraApiClient | null>(null);
   const [state, setState] = useState<State>({ trackedTickets: {}, starredTickets: [], isDefault: true });
   const [backendData, setBackendData] = useState<any>(undefined);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (!activeAccount?.email || !activeAccount?.jiraToken || !activeAccount?.jiraSubdomain) return;
@@ -43,12 +44,17 @@ const useJira = (activeAccount: JiraAccount | undefined) => {
   const fetchWorklogs = useCallback(
     (selectedDate: Date) => {
       if (!client) return;
+      setIsLoading(true);
       client
         .getLogsForDay(moment(selectedDate).format('YYYY-MM-DD'))
         .then((data) => {
           setBackendData(data);
+          setIsLoading(false);
         })
-        .catch((err) => console.error('Failed to fetch logs:', err));
+        .catch((err) => {
+          console.error('Failed to fetch logs:', err);
+          setIsLoading(false);
+        });
     },
     [client],
   );
@@ -59,7 +65,7 @@ const useJira = (activeAccount: JiraAccount | undefined) => {
     setState(newState);
   };
 
-  return { client, state, backendData, fetchWorklogs, updateState };
+  return { client, state, backendData, fetchWorklogs, updateState, isLoading };
 };
 
 export default useJira;

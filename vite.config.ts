@@ -21,7 +21,7 @@ export default defineConfig({
     host: true,
     proxy: {
       '/proxy': {
-        target: (([req]: any) => matchURL(req.originalUrl).origin) as unknown as string,
+        target: (([req]: any) => matchURL(req?.originalUrl)?.origin ?? '') as unknown as string,
         changeOrigin: true,
         secure: true,
         headers: {
@@ -29,7 +29,7 @@ export default defineConfig({
         },
         rewrite: (path) => {
           const url = matchURL(`https://a.com/${path}`);
-          return url.href.replace(url?.origin, '');
+          return url?.href.replace(url?.origin, '') ?? '';
         },
       },
     },
