@@ -460,18 +460,6 @@ export default function App() {
                 toggleStar={toggleStar}
               />
             )}
-
-            <footer className="text-center py-8 pb-0 text-gray-500 dark:text-gray-400">
-              <small>
-                Made with
-                <span className="mx-1 text-red-500" role="img" aria-label="love">
-                  ❤
-                </span>
-                by yrambler2001
-                <br />
-                Copyright © 2001-2025 - All Rights Reserved
-              </small>
-            </footer>
           </div>
         </div>
       </div>

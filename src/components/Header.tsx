@@ -31,6 +31,8 @@ const Header: React.FC<HeaderProps> = ({
   handleRowClick,
   activeAccount,
 }) => {
+  const [isTimelineOpen, setIsTimelineOpen] = React.useState(true);
+  
   const formatDateForInput = (date: Date | null) => {
     if (!date) return '';
     return moment(date).format('YYYY-MM-DD');
@@ -69,14 +71,39 @@ const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      {timelineData.allLogs.length > 0 ? (
-        <Timeline timelineData={timelineData} hoveredLogId={hoveredLogId} setHoveredLogId={setHoveredLogId} handleRowClick={handleRowClick} />
-      ) : (
-        <div className="text-center py-16">
-          <p className="text-gray-500 dark:text-gray-400">No timelogs found for the selected date.</p>
-          <p className="text-sm text-gray-400 mt-2">Use the search to start tracking or add a log.</p>
-        </div>
-      )}
+      <div className="border dark:border-gray-700 rounded-lg">
+        <button 
+          onClick={() => setIsTimelineOpen(!isTimelineOpen)}
+          className="w-full p-4 bg-gray-50 dark:bg-gray-800 rounded-t-lg border-b dark:border-gray-700 flex justify-between items-center hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+        >
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-white">Timelogs</h2>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-500 dark:text-gray-400">
+              {timelineData.allLogs.length} {timelineData.allLogs.length === 1 ? 'entry' : 'entries'}
+            </span>
+            <svg 
+              className={`w-5 h-5 text-gray-500 transition-transform ${isTimelineOpen ? 'rotate-180' : ''}`}
+              fill="none" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </button>
+        {isTimelineOpen && (
+          <div className="divide-y dark:divide-gray-700">
+            {timelineData.allLogs.length > 0 ? (
+              <Timeline timelineData={timelineData} hoveredLogId={hoveredLogId} setHoveredLogId={setHoveredLogId} handleRowClick={handleRowClick} />
+            ) : (
+              <div className="text-center py-16">
+                <p className="text-gray-500 dark:text-gray-400">No timelogs found for the selected date.</p>
+                <p className="text-sm text-gray-400 mt-2">Use the search to start tracking or add a log.</p>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
